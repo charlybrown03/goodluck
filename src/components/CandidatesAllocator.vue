@@ -3,6 +3,7 @@ import sampleSize from 'lodash.samplesize'
 import shuffle from 'lodash.shuffle'
 import { computed, ref } from 'vue'
 
+const disableButton = ref(false)
 const candidates = ref({
   'Brayam': true,
   'Carlos': true,
@@ -22,6 +23,8 @@ const outputAmount = ref(3)
 const result = ref([])
 
 async function onClickGetParticipants () {
+  disableButton.value = true
+
   result.value = shuffle(elegibleCandidates.value)
   
   await waitForAnimation()
@@ -32,6 +35,8 @@ async function onClickGetParticipants () {
   
   await waitForAnimation()
   result.value = sampleSize(elegibleCandidates.value, outputAmount.value)
+
+  disableButton.value = false
 }
 
 function onChangeCandidate () {
@@ -64,7 +69,10 @@ function waitForAnimation () {
   <div class="actions__container">
     <input type="number" :max="elegibleCandidates.length" v-model.number="outputAmount" >
   
-    <button @click="onClickGetParticipants">
+    <button 
+      :disabled="disableButton"
+      @click="onClickGetParticipants"
+    >
       Get candidates!
     </button>
   </div>

@@ -3,6 +3,11 @@ import sampleSize from 'lodash.samplesize'
 import shuffle from 'lodash.shuffle'
 import { computed, ref } from 'vue'
 
+const song = new Audio('/src/assets/Squid Game Sound Effect.mp3')
+const shot1 = new Audio('/src/assets/shot.mp3')
+const shot2 = new Audio('/src/assets/shot.mp3')
+const shot3 = new Audio('/src/assets/shot.mp3')
+
 const disableButton = ref(false)
 const candidates = ref({
   'Brayam': true,
@@ -25,6 +30,8 @@ const result = ref([])
 async function onClickGetParticipants () {
   disableButton.value = true
 
+  await song.play()
+
   result.value = shuffle(elegibleCandidates.value)
   
   await waitForAnimation()
@@ -35,6 +42,12 @@ async function onClickGetParticipants () {
   
   await waitForAnimation()
   result.value = sampleSize(elegibleCandidates.value, outputAmount.value)
+
+  await shot1.play()
+  await waitForAnimation(Math.random() * 1500)
+  await shot2.play()
+  await waitForAnimation(Math.random() * 1500)
+  await shot3.play()
 
   disableButton.value = false
 }
@@ -47,8 +60,8 @@ function onChangeCandidate () {
   result.value = []
 }
 
-function waitForAnimation () {
-  return new Promise((resolve) => setTimeout(() => resolve(), 700))
+function waitForAnimation (delay = 2660) {
+  return new Promise((resolve) => setTimeout(() => resolve(), delay))
 }
 </script>
 
@@ -95,7 +108,7 @@ function waitForAnimation () {
 <style>
 .flip-list-move,
 .flip-list-leave-active {
-  transition: all 0.7s ease;
+  transition: all 2.66s ease;
 }
 
 .flip-list-leave-active {

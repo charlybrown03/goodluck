@@ -5,3 +5,9 @@ import CandidatesAllocator from './components/CandidatesAllocator.vue'
 <template>
   <candidates-allocator />
 </template>
+
+<style>
+* {
+  font-family: 'Comic Sans MS';
+}
+</style>

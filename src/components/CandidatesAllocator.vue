@@ -3,10 +3,13 @@ import sampleSize from 'lodash.samplesize'
 import shuffle from 'lodash.shuffle'
 import { computed, ref } from 'vue'
 
-const song = new Audio('/src/assets/Squid Game Sound Effect.mp3')
-const shot1 = new Audio('/src/assets/shot.mp3')
-const shot2 = new Audio('/src/assets/shot.mp3')
-const shot3 = new Audio('/src/assets/shot.mp3')
+import songSound from '../assets/Squid Game Sound Effect.mp3'
+import shotSound from '../assets/shot.mp3'
+
+const song = new Audio(songSound)
+const shot1 = new Audio(shotSound)
+const shot2 = new Audio(shotSound)
+const shot3 = new Audio(shotSound)
 
 const disableButton = ref(false)
 const candidates = ref({

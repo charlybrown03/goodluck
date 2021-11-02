@@ -6,6 +6,9 @@ import { computed, ref } from 'vue'
 import songSound from '../assets/Squid Game Sound Effect.mp3'
 import shotSound from '../assets/shot.mp3'
 
+const MAX = 1500
+const MIN = 100
+
 const song = new Audio(songSound)
 
 const disableButton = ref(false)
@@ -41,13 +44,17 @@ async function onClickGetParticipants () {
   result.value = shuffle(elegibleCandidates.value)
   
   await waitForAnimation()
-  result.value = sampleSize(elegibleCandidates.value, outputAmount.value)
 
-  const discardedCandidatesLength = elegibleCandidates.value.length - outputAmount.value
-  for (let i = 0; i < discardedCandidatesLength; i++) {
+  while (result.value.length > outputAmount.value) {
     const shot = new Audio(shotSound)
+
+    result.value.splice(Math.floor(Math.random() * result.value.length), 1)
     await shot.play()
-    if (i < discardedCandidatesLength) await waitForAnimation(Math.random() * 1500)
+
+    if (result.value.length !== outputAmount.value) {
+      const duration = Math.floor(Math.random() * (MAX - MIN + 1)) + MIN
+      await waitForAnimation(duration)
+    }
   }
 
   disableButton.value = false
@@ -73,6 +80,7 @@ function waitForAnimation (delay = 2660) {
       <input 
         v-model="candidates[candidate]"
         :id="candidate"
+        :disabled="disableButton"
         type="checkbox"
         @change="onChangeCandidate"
       />
@@ -106,14 +114,28 @@ function waitForAnimation (delay = 2660) {
   </transition-group>
 </template>
 
-<style>
-.flip-list-move,
-.flip-list-leave-active {
+<style lang="scss">
+$translate-size: 50px;
+
+.flip-list-enter-active {
+  position: relative;
+  left: -$translate-size;
+  opacity: 0.1;
+  transition: all 1s ease;
+}
+
+.flip-list-enter-to {
+  opacity: 1;
+  transform: translateX($translate-size);
+}
+
+.flip-list-move {
   transition: all 2.66s ease;
 }
 
 .flip-list-leave-active {
-  transform: translateX(-50px);
+  transform: translateX(-$translate-size);
+  transition: all 0.3s ease;
 }
 
 .candidates__container {

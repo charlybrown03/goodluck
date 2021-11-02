@@ -7,9 +7,6 @@ import songSound from '../assets/Squid Game Sound Effect.mp3'
 import shotSound from '../assets/shot.mp3'
 
 const song = new Audio(songSound)
-const shot1 = new Audio(shotSound)
-const shot2 = new Audio(shotSound)
-const shot3 = new Audio(shotSound)
 
 const disableButton = ref(false)
 const candidates = ref({
@@ -46,11 +43,12 @@ async function onClickGetParticipants () {
   await waitForAnimation()
   result.value = sampleSize(elegibleCandidates.value, outputAmount.value)
 
-  await shot1.play()
-  await waitForAnimation(Math.random() * 1500)
-  await shot2.play()
-  await waitForAnimation(Math.random() * 1500)
-  await shot3.play()
+  const discardedCandidatesLength = elegibleCandidates.value.length - outputAmount.value
+  for (let i = 0; i < discardedCandidatesLength; i++) {
+    const shot = new Audio(shotSound)
+    await shot.play()
+    if (i < discardedCandidatesLength) await waitForAnimation(Math.random() * 1500)
+  }
 
   disableButton.value = false
 }

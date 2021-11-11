@@ -89,7 +89,12 @@ function waitForAnimation (delay = 2660) {
   </div>
 
   <div class="actions__container">
-    <input type="number" :max="elegibleCandidates.length" v-model.number="outputAmount" >
+    <input 
+      type="number"
+      min="0"
+      :max="elegibleCandidates.length" 
+      v-model.number="outputAmount"
+    >
   
     <button 
       :disabled="disableButton"

@@ -1,90 +1,120 @@
-<script setup>
-import sampleSize from 'lodash.samplesize'
+<script>
+import { defineComponent } from 'vue'
 import shuffle from 'lodash.shuffle'
-import { computed, ref } from 'vue'
 
 import songSound from '../assets/Squid Game Sound Effect.mp3'
 import shotSound from '../assets/shot.mp3'
 
+const song = new Audio(songSound)
+
 const MAX = 1500
 const MIN = 100
 
-const song = new Audio(songSound)
+export default defineComponent({
+  data () {
+    return {
+      candidates: [
+        'Brayam',
+        'Carlos',
+        'Germán',
+        'Javi',
+        'JuanFra',
+        'Quim'
+      ],
+      disableButton: false,
+      newCandidate: '',
+      outputAmount: 3,
+      result: []
+    }
+  },
 
-const disableButton = ref(false)
-const candidates = ref({
-  'Brayam': true,
-  'Carlos': true,
-  'Germán': true,
-  'Javi': true,
-  'JuanFra': true,
-  'Quim': true
-})
+  computed: {
+    max () {
+      if (this.candidates.length === 0) return 0
 
-const elegibleCandidates = computed(() => {
-  return Object.keys(candidates.value).filter((candidate) => {
-    return candidates.value[candidate]
-  })
-})
+      return this.candidates.length - 1
+    }
+  },
 
-const outputAmount = ref(3)
-const result = ref([])
+  watch: {
+    candidates: {
+      deep: true,
+      handler () {
+        this.outputAmount = Math.min(this.max, this.outputAmount)
+        this.result = []
+      }
+    }
+  },
 
-async function onClickGetParticipants () {
-  disableButton.value = true
+  methods: {
+    addNewCandidate () {
+      if (this.candidates.includes(this.newCandidate)) return
 
-  await song.play()
+      this.candidates.push(this.newCandidate)
+      this.newCandidate = ''
+    },
 
-  result.value = shuffle(elegibleCandidates.value)
-  
-  await waitForAnimation()
-  result.value = shuffle(elegibleCandidates.value)
-  
-  await waitForAnimation()
-  result.value = shuffle(elegibleCandidates.value)
-  
-  await waitForAnimation()
+    async onClickGetParticipants () {
+      this.disableButton = true
 
-  while (result.value.length > outputAmount.value) {
-    const shot = new Audio(shotSound)
+      await song.play()
 
-    result.value.splice(Math.floor(Math.random() * result.value.length), 1)
-    await shot.play()
+      this.result = shuffle(this.candidates)
+      
+      await this.waitForAnimation()
+      this.result = shuffle(this.candidates)
+      
+      await this.waitForAnimation()
+      this.result = shuffle(this.candidates)
+      
+      await this.waitForAnimation()
 
-    if (result.value.length !== outputAmount.value) {
-      const duration = Math.floor(Math.random() * (MAX - MIN + 1)) + MIN
-      await waitForAnimation(duration)
+      while (this.result.length > this.outputAmount) {
+        const shot = new Audio(shotSound)
+
+        this.result.splice(Math.floor(Math.random() * this.result.length), 1)
+        await shot.play()
+
+        if (this.result.length !== this.outputAmount) {
+          const duration = Math.floor(Math.random() * (MAX - MIN + 1)) + MIN
+          await this.waitForAnimation(duration)
+        }
+      }
+
+      this.disableButton = false
+    },
+
+    removeCandidate (candidate) {
+      const index = this.candidates.findIndex(c => c === candidate)
+      this.candidates.splice(index, 1)
+    },
+
+    resetCandidates () {
+      this.candidates = []
+    },
+
+    waitForAnimation (delay = 2660) {
+      return new Promise((resolve) => setTimeout(() => resolve(), delay))
     }
   }
-
-  disableButton.value = false
-}
-
-function onChangeCandidate () {
-  const candidatesLength = elegibleCandidates.value.length
-  const numberIsHigher = outputAmount.value > candidatesLength
-
-  outputAmount.value = numberIsHigher ? candidatesLength : outputAmount.value
-  result.value = []
-}
-
-function waitForAnimation (delay = 2660) {
-  return new Promise((resolve) => setTimeout(() => resolve(), delay))
-}
+})
 </script>
 
 <template>
   <h2>Candidates</h2>
+  <div class="row mb-1">
+    <div>
+      <input type="text" v-model="newCandidate">
+      <button :disabled="!newCandidate || disableButton" @click="addNewCandidate">Add new candidate</button>
+    </div>
+    
+    <button @click="resetCandidates" :disabled="disableButton">Reset all candidates</button>
+  </div>
+
   <div class="candidates__container">
-    <div v-for="(index, candidate) in candidates" :key="`${candidate}=${index}`">
-      <input 
-        v-model="candidates[candidate]"
-        :id="candidate"
-        :disabled="disableButton"
-        type="checkbox"
-        @change="onChangeCandidate"
-      />
-      <label :for="candidate">{{ candidate }}</label>
+    <div v-for="(candidate, index) in candidates" :key="`${candidate}-${index}`" class="row">
+      <span>{{ candidate }}</span>
+      <button @click="removeCandidate(candidate)" :disabled="disableButton">X</button>
     </div>
   </div>
 
@@ -92,7 +122,7 @@ function waitForAnimation (delay = 2660) {
     <input 
       type="number"
       min="0"
-      :max="elegibleCandidates.length" 
+      :max="max"
       v-model.number="outputAmount"
     >
   
@@ -121,6 +151,15 @@ function waitForAnimation (delay = 2660) {
 
 <style lang="scss">
 $translate-size: 50px;
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mb-1 {
+  margin-bottom: 1rem;
+}
 
 .flip-list-enter-active {
   position: relative;

@@ -11,62 +11,53 @@ const MAX = 1500
 const MIN = 100
 
 export default defineComponent({
-  data () {
+  data() {
     return {
-      candidates: [
-        'Brayam',
-        'Carlos',
-        'Germán',
-        'Javi',
-        'JuanFra',
-        'Quim'
-      ],
+      candidates: ['Brayam', 'Carlos', 'Germán', 'Javi', 'JuanFra', 'Quim'],
       disableButton: false,
       newCandidate: '',
       outputAmount: 3,
-      result: []
+      result: [],
     }
   },
 
   computed: {
-    max () {
-      if (this.candidates.length === 0) return 0
-
-      return this.candidates.length - 1
-    }
+    max() {
+      return Math.max(this.candidates.length, 0)
+    },
   },
 
   watch: {
     candidates: {
       deep: true,
-      handler () {
+      handler() {
         this.outputAmount = Math.min(this.max, this.outputAmount)
         this.result = []
-      }
-    }
+      },
+    },
   },
 
   methods: {
-    addNewCandidate () {
+    addNewCandidate() {
       if (this.candidates.includes(this.newCandidate)) return
 
       this.candidates.push(this.newCandidate)
       this.newCandidate = ''
     },
 
-    async onClickGetParticipants () {
+    async onClickGetParticipants() {
       this.disableButton = true
 
       await song.play()
 
       this.result = shuffle(this.candidates)
-      
+
       await this.waitForAnimation()
       this.result = shuffle(this.candidates)
-      
+
       await this.waitForAnimation()
       this.result = shuffle(this.candidates)
-      
+
       await this.waitForAnimation()
 
       while (this.result.length > this.outputAmount) {
@@ -84,19 +75,24 @@ export default defineComponent({
       this.disableButton = false
     },
 
-    removeCandidate (candidate) {
-      const index = this.candidates.findIndex(c => c === candidate)
+    onInputOutputAmount(evt) {
+      const value = evt.target.value
+      this.outputAmount = Math.min(this.max, Math.max(value, 0))
+    },
+
+    removeCandidate(candidate) {
+      const index = this.candidates.findIndex((c) => c === candidate)
       this.candidates.splice(index, 1)
     },
 
-    resetCandidates () {
+    resetCandidates() {
       this.candidates = []
     },
 
-    waitForAnimation (delay = 2660) {
+    waitForAnimation(delay = 2660) {
       return new Promise((resolve) => setTimeout(() => resolve(), delay))
-    }
-  }
+    },
+  },
 })
 </script>
 
@@ -104,46 +100,45 @@ export default defineComponent({
   <h2>Candidates</h2>
   <div class="row mb-1">
     <div>
-      <input type="text" v-model="newCandidate">
-      <button :disabled="!newCandidate || disableButton" @click="addNewCandidate">Add new candidate</button>
+      <input v-model="newCandidate" type="text" />
+      <button
+        :disabled="!newCandidate || disableButton"
+        @click="addNewCandidate"
+      >
+        Add new candidate
+      </button>
     </div>
-    
-    <button @click="resetCandidates" :disabled="disableButton">Reset all candidates</button>
+
+    <button :disabled="disableButton" @click="resetCandidates">
+      Reset all candidates
+    </button>
   </div>
 
   <div class="candidates__container">
-    <div v-for="(candidate, index) in candidates" :key="`${candidate}-${index}`" class="row">
+    <div v-for="candidate in candidates" :key="candidate" class="row">
       <span>{{ candidate }}</span>
-      <button @click="removeCandidate(candidate)" :disabled="disableButton">X</button>
+      <button :disabled="disableButton" @click="removeCandidate(candidate)">
+        X
+      </button>
     </div>
   </div>
 
   <div class="actions__container">
-    <input 
+    <input
+      :value="outputAmount"
       type="number"
       min="0"
       :max="max"
-      v-model.number="outputAmount"
-    >
-  
-    <button 
-      :disabled="disableButton"
-      @click="onClickGetParticipants"
-    >
+      @input="onInputOutputAmount"
+    />
+
+    <button :disabled="disableButton" @click="onClickGetParticipants">
       Get candidates!
     </button>
   </div>
 
-
-  <transition-group 
-    name="flip-list"
-    tag="ul"
-  >
-    <li 
-      v-for="(participant, index) in result"
-      :key="participant"
-      :data-index="index"
-    >
+  <transition-group name="flip-list" tag="ul">
+    <li v-for="participant in result" :key="participant">
       {{ participant }}
     </li>
   </transition-group>
@@ -195,7 +190,6 @@ $translate-size: 50px;
   margin-bottom: 1rem;
 }
 
-input[type="checkbox"],
 button {
   cursor: pointer;
 }

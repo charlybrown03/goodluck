@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
+    "dev": "vite",
+    "format": "prettier .  --write",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix .",
     "serve": "vite preview"
   },
   "dependencies": {
@@ -13,6 +15,11 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.9.3",
+    "eslint": "^8.3.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^8.1.1",
+    "prettier": "^2.4.1",
     "sass": "^1.43.4",
     "sass-loader": "^12.3.0",
     "vite": "^2.6.4"

@@ -10,7 +10,9 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@quasar/extras": "^1.12.1",
     "lodash.shuffle": "^4.2.0",
+    "quasar": "^2.3.3",
     "vue": "^3.2.16"
   },
   "devDependencies": {

@@ -1,4 +1,13 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import './styles/index.scss'
 
-createApp(App).mount('#app')
+import { createApp } from 'vue'
+import { Quasar } from 'quasar'
+
+import App from './App.vue'
+import quasarConfig from './quasar.config'
+
+const app = createApp(App)
+
+app.use(Quasar, quasarConfig)
+
+app.mount('#app')

@@ -14,25 +14,23 @@ export default defineComponent({
   data() {
     return {
       candidates: ['Brayam', 'Carlos', 'Germán', 'Javi', 'JuanFra', 'Quim'],
-      disableButton: false,
+      disable: false,
       newCandidate: '',
       outputAmount: 3,
-      result: [],
     }
   },
 
   computed: {
     max() {
-      return Math.max(this.candidates.length, 0)
+      return Math.max(this.candidates.length - 1, 0)
     },
-  },
 
-  watch: {
-    candidates: {
-      deep: true,
-      handler() {
-        this.outputAmount = Math.min(this.max, this.outputAmount)
-        this.result = []
+    proxyAmount: {
+      get() {
+        return this.outputAmount
+      },
+      set(value) {
+        this.outputAmount = Math.min(this.max, Math.max(value, 0))
       },
     },
   },
@@ -46,43 +44,46 @@ export default defineComponent({
     },
 
     async onClickGetParticipants() {
-      this.disableButton = true
+      this.disable = true
 
       await song.play()
 
-      this.result = shuffle(this.candidates)
+      this.candidates = shuffle(this.candidates)
 
       await this.waitForAnimation()
-      this.result = shuffle(this.candidates)
+      this.candidates = shuffle(this.candidates)
 
       await this.waitForAnimation()
-      this.result = shuffle(this.candidates)
+      this.candidates = shuffle(this.candidates)
 
       await this.waitForAnimation()
 
-      while (this.result.length > this.outputAmount) {
+      while (this.candidates.length > this.outputAmount) {
         const shot = new Audio(shotSound)
 
-        this.result.splice(Math.floor(Math.random() * this.result.length), 1)
+        this.candidates.splice(
+          Math.floor(Math.random() * this.candidates.length),
+          1
+        )
         await shot.play()
 
-        if (this.result.length !== this.outputAmount) {
+        if (this.candidates.length !== this.outputAmount) {
           const duration = Math.floor(Math.random() * (MAX - MIN + 1)) + MIN
           await this.waitForAnimation(duration)
         }
       }
 
-      this.disableButton = false
+      this.disable = false
     },
 
-    onInputOutputAmount(evt) {
-      const value = evt.target.value
+    onInputOutputAmount(value) {
       this.outputAmount = Math.min(this.max, Math.max(value, 0))
     },
 
     removeCandidate(candidate) {
       const index = this.candidates.findIndex((c) => c === candidate)
       this.candidates.splice(index, 1)
+      this.outputAmount = Math.min(this.max, this.outputAmount)
     },
 
     resetCandidates() {
@@ -97,64 +98,85 @@ export default defineComponent({
 </script>
 
 <template>
-  <h2>Candidates</h2>
-  <div class="row mb-1">
-    <div>
-      <input v-model="newCandidate" type="text" />
-      <button
-        :disabled="!newCandidate || disableButton"
-        @click="addNewCandidate"
-      >
-        Add new candidate
-      </button>
-    </div>
+  <div class="row justify-between align-start q-mb-md">
+    <div class="col text-h4">Candidates</div>
 
-    <button :disabled="disableButton" @click="resetCandidates">
-      Reset all candidates
-    </button>
+    <div class="col">
+      <div class="row q-gutter-x-lg justify-end">
+        <q-form class="row q-gutter-x-md" autofocus @submit="addNewCandidate">
+          <q-input
+            v-model="newCandidate"
+            :disable="disable"
+            label="Add candidate"
+            dense
+          />
+
+          <q-btn
+            :disable="!newCandidate || disable"
+            color="primary"
+            dense
+            icon="mdi-plus"
+            outline
+            fab-mini
+            type="submit"
+          />
+        </q-form>
+
+        <q-btn
+          :disabled="disable"
+          color="primary"
+          outline
+          @click="resetCandidates"
+        >
+          Empty Candidates List
+        </q-btn>
+      </div>
+    </div>
   </div>
 
-  <div class="candidates__container">
-    <div v-for="candidate in candidates" :key="candidate" class="row">
-      <span>{{ candidate }}</span>
-      <button :disabled="disableButton" @click="removeCandidate(candidate)">
-        X
-      </button>
-    </div>
-  </div>
+  <q-separator />
 
-  <div class="actions__container">
-    <input
-      :value="outputAmount"
+  <div class="row q-gutter-lg q-mt-md">
+    <q-input
+      v-model="proxyAmount"
+      :disable="disable"
+      dense
       type="number"
-      min="0"
       :max="max"
-      @input="onInputOutputAmount"
-    />
+      label="How many will survive?"
+    >
+      <template #after>
+        <q-btn
+          rounded
+          size="md"
+          :disable="disable || !outputAmount"
+          @click="onClickGetParticipants"
+        >
+          <q-icon name="mdi-circle-outline" />
+          <q-icon name="mdi-triangle-outline" />
+          <q-icon name="mdi-square-outline" />
+        </q-btn>
+      </template>
+    </q-input>
 
-    <button :disabled="disableButton" @click="onClickGetParticipants">
-      Get candidates!
-    </button>
+    <transition-group name="flip-list" tag="ul">
+      <li v-for="candidate in candidates" :key="candidate">
+        <q-chip
+          :disable="disable"
+          color="primary"
+          removable
+          text-color="white"
+          @remove="removeCandidate(candidate)"
+        >
+          {{ candidate }}
+        </q-chip>
+      </li>
+    </transition-group>
   </div>
-
-  <transition-group name="flip-list" tag="ul">
-    <li v-for="participant in result" :key="participant">
-      {{ participant }}
-    </li>
-  </transition-group>
 </template>
 
 <style lang="scss">
 $translate-size: 50px;
-
-.row {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.mb-1 {
-  margin-bottom: 1rem;
-}
 
 .flip-list-enter-active {
   position: relative;
@@ -173,24 +195,13 @@ $translate-size: 50px;
 }
 
 .flip-list-leave-active {
-  transform: translateX(-$translate-size);
+  transform: translateX($translate-size);
   transition: all 0.3s ease;
 }
 
-.candidates__container {
-  display: grid;
-  grid-auto-flow: column;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.actions__container {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-button {
-  cursor: pointer;
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 </style>

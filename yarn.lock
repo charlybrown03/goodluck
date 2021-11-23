@@ -36,6 +36,11 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
+"@quasar/extras@^1.12.1":
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/@quasar/extras/-/extras-1.12.1.tgz#859f7ac79789f840c1d51f994f5bfd5046b1f261"
+  integrity sha512-EwOnaJEDHo9zCnJzd1sFw1sfMAAq8cJaIjzr2+A9o2NcVLaIhD7YAaJdlIdcNmQnyuPAiq9NghUize8lCS0epw==
+
 "@vitejs/plugin-vue@^1.9.3":
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-1.9.3.tgz#93d61893ce6c723d0209af0483ec8b91a2cd811f"
@@ -897,6 +902,11 @@ punycode@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
+
+quasar@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.3.3.tgz#f04797c00d238b88fe2fc42cdabef66bc28f1a6b"
+  integrity sha512-0Q/OWX61IHIIljNUBTibR4bB0uXzR+ZtSa8y8jxerNiRoiIbqdo+FMHCRBvPr/3RUDqQ680YgHVjQEDpUCvM1Q==
 
 readdirp@~3.6.0:
   version "3.6.0"

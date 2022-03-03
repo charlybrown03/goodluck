@@ -16,6 +16,7 @@ export default defineComponent({
       candidates: ['Brayam', 'Carlos', 'Germán', 'Javi', 'JuanFra', 'Quim'],
       disable: false,
       newCandidate: '',
+      isJuanfranSelected: false,
       outputAmount: 3,
     }
   },
@@ -44,6 +45,7 @@ export default defineComponent({
     },
 
     async onClickGetParticipants() {
+      this.isJuanfranSelected = false
       this.disable = true
 
       await song.play()
@@ -73,6 +75,7 @@ export default defineComponent({
         }
       }
 
+      this.isJuanfranSelected = this.candidates.includes('JuanFra')
       this.disable = false
     },
 
@@ -172,6 +175,7 @@ export default defineComponent({
         </q-chip>
       </li>
     </transition-group>
+    <img v-if="isJuanfranSelected" src="/troll.gif" alt="A troll" />
   </div>
 </template>
 

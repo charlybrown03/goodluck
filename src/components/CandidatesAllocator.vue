@@ -13,7 +13,15 @@ const MIN = 100
 export default defineComponent({
   data() {
     return {
-      candidates: ['Brayam', 'Carlos', 'Germán', 'Javi', 'JuanFra', 'Quim'],
+      candidates: [
+        'Brayam',
+        'Carlos',
+        'Germán',
+        'Javi I',
+        'Javi II',
+        'JuanFra',
+        'Quim',
+      ],
       disable: false,
       newCandidate: '',
       isJuanfranSelected: false,

@@ -16,6 +16,7 @@
     "vue": "^3.2.16"
   },
   "devDependencies": {
+    "@types/lodash.shuffle": "^4.2.7",
     "@vitejs/plugin-vue": "^1.9.3",
     "eslint": "^8.3.0",
     "eslint-config-prettier": "^8.3.0",

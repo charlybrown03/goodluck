@@ -16,7 +16,8 @@ export default defineComponent({
       candidates: ['Brayam', 'Carlos', 'Germán', 'Javi', 'JuanFra', 'Quim'],
       disable: false,
       newCandidate: '',
-      isJuanfranSelected: false,
+      isRuffleEnded: false,
+      baseAnimationTime: 5,
       outputAmount: 3,
     }
   },
@@ -34,6 +35,14 @@ export default defineComponent({
         this.outputAmount = Math.min(this.max, Math.max(value, 0))
       },
     },
+
+    rotateValue() {
+      return `${this.baseAnimationTime}s`
+    },
+
+    spinAroundValue() {
+      return `${this.baseAnimationTime * this.candidates.length}s`
+    },
   },
 
   methods: {
@@ -44,8 +53,14 @@ export default defineComponent({
       this.newCandidate = ''
     },
 
+    computeDelay(index) {
+      const baseDelay = this.baseAnimationTime * this.candidates.length
+
+      return `-${baseDelay / (index + 1)}s`
+    },
+
     async onClickGetParticipants() {
-      this.isJuanfranSelected = false
+      this.isRuffleEnded = false
       this.disable = true
 
       await song.play()
@@ -75,7 +90,7 @@ export default defineComponent({
         }
       }
 
-      this.isJuanfranSelected = this.candidates.includes('JuanFra')
+      this.isRuffleEnded = true
       this.disable = false
     },
 
@@ -175,12 +190,72 @@ export default defineComponent({
         </q-chip>
       </li>
     </transition-group>
-    <img v-if="isJuanfranSelected" src="/troll.gif" alt="A troll" />
+
+    <div class="cosa">
+      <div v-if="isRuffleEnded" class="thumbnail-container">
+        <div class="box-center"></div>
+        <div
+          v-for="(candidate, index) in candidates"
+          :key="candidate"
+          class="item"
+          :style="{ animationDelay: computeDelay(index) }"
+        >
+          <img :src="`${candidate}.jpg`" :alt="candidate" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <style lang="scss">
 $translate-size: 50px;
+
+@keyframes spinAround {
+  from {
+    transform: rotate(0deg) translate(120px) scale(0.7);
+  }
+  to {
+    transform: rotate(360deg) translate(120px) scale(0.7);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cosa {
+  display: grid;
+  justify-content: center;
+  width: 100%;
+}
+
+.thumbnail-container {
+  width: 500px;
+  height: 350px;
+
+  display: grid;
+  justify-content: center;
+  align-content: center;
+
+  & > * {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+.item {
+  animation: spinAround v-bind(spinAroundValue) linear infinite;
+
+  img {
+    width: 100px;
+    animation: rotate v-bind(rotateValue) linear infinite;
+  }
+}
 
 .flip-list-enter-active {
   position: relative;

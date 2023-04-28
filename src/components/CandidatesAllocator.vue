@@ -191,7 +191,7 @@ export default defineComponent({
       </li>
     </transition-group>
 
-    <div class="cosa">
+    <div class="thumbail-section">
       <div v-if="isRuffleEnded" class="thumbnail-container">
         <div class="box-center"></div>
         <div
@@ -228,7 +228,7 @@ $translate-size: 50px;
   }
 }
 
-.cosa {
+.thumbail-section {
   display: grid;
   justify-content: center;
   width: 100%;
@@ -236,6 +236,7 @@ $translate-size: 50px;
 
 .thumbnail-container {
   width: 500px;
+  max-width: 100%;
   height: 350px;
 
   display: grid;

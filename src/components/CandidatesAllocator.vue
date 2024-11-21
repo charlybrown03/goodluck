@@ -13,7 +13,7 @@ const MIN = 100
 export default defineComponent({
   data() {
     return {
-      candidates: ['Brayam', 'Carlos', 'Germán', 'Javi', 'JuanFra', 'Quim'],
+      candidates: ['Brayam', 'Carlos', 'Javi', 'JuanFra', 'Quim'],
       disable: false,
       newCandidate: '',
       isRuffleEnded: false,

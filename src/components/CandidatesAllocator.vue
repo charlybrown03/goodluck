@@ -11,22 +11,25 @@ const MAX = 1500
 const MIN = 100
 
 export default defineComponent({
+  props: {
+    initialCandidates: {
+      type: Array,
+      required: true,
+    },
+
+    initialOutputAmount: {
+      type: Number,
+      required: true,
+    },
+  },
+
   data() {
     return {
-      candidates: [
-        'Adrià',
-        'CarlosJ',
-        'CarlosM',
-        'Diego',
-        'Javi',
-        'JuanFra',
-        'Quim',
-      ],
+      candidates: [...this.initialCandidates],
       disable: false,
       newCandidate: '',
-      isRuffleEnded: false,
       baseAnimationTime: 5,
-      outputAmount: 3,
+      outputAmount: this.initialOutputAmount,
     }
   },
 
@@ -43,14 +46,6 @@ export default defineComponent({
         this.outputAmount = Math.min(this.max, Math.max(value, 0))
       },
     },
-
-    rotateValue() {
-      return `${this.baseAnimationTime}s`
-    },
-
-    spinAroundValue() {
-      return `${this.baseAnimationTime * this.candidates.length}s`
-    },
   },
 
   methods: {
@@ -61,14 +56,7 @@ export default defineComponent({
       this.newCandidate = ''
     },
 
-    computeDelay(index) {
-      const baseDelay = this.baseAnimationTime * this.candidates.length
-
-      return `-${baseDelay / (index + 1)}s`
-    },
-
     async onClickGetParticipants() {
-      this.isRuffleEnded = false
       this.disable = true
 
       await song.play()
@@ -98,7 +86,6 @@ export default defineComponent({
         }
       }
 
-      this.isRuffleEnded = true
       this.disable = false
     },
 
@@ -198,73 +185,11 @@ export default defineComponent({
         </q-chip>
       </li>
     </transition-group>
-
-    <div class="thumbail-section">
-      <div v-if="isRuffleEnded" class="thumbnail-container">
-        <div class="box-center"></div>
-        <div
-          v-for="(candidate, index) in candidates"
-          :key="candidate"
-          class="item"
-          :style="{ animationDelay: computeDelay(index) }"
-        >
-          <img :src="`${candidate}.jpg`" :alt="candidate" />
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <style lang="scss">
 $translate-size: 50px;
-
-@keyframes spinAround {
-  from {
-    transform: rotate(0deg) translate(120px) scale(0.7);
-  }
-  to {
-    transform: rotate(360deg) translate(120px) scale(0.7);
-  }
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.thumbail-section {
-  display: grid;
-  justify-content: center;
-  width: 100%;
-}
-
-.thumbnail-container {
-  width: 500px;
-  max-width: 100%;
-  height: 350px;
-
-  display: grid;
-  justify-content: center;
-  align-content: center;
-
-  & > * {
-    grid-column: 1;
-    grid-row: 1;
-  }
-}
-
-.item {
-  animation: spinAround v-bind(spinAroundValue) linear infinite;
-
-  img {
-    width: 100px;
-    animation: rotate v-bind(rotateValue) linear infinite;
-  }
-}
 
 .flip-list-enter-active {
   position: relative;

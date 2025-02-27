@@ -111,81 +111,83 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="row justify-between align-start q-mb-md">
-    <div class="col text-h4">Candidates</div>
+  <q-page padding>
+    <div class="row justify-between align-start q-mb-md">
+      <div class="col text-h4">Candidates</div>
 
-    <div class="col">
-      <div class="row q-gutter-x-lg justify-end">
-        <q-form class="row q-gutter-x-md" autofocus @submit="addNewCandidate">
-          <q-input
-            v-model="newCandidate"
-            :disable="disable"
-            label="Add candidate"
-            dense
-          />
+      <div class="col">
+        <div class="row q-gutter-x-lg justify-end">
+          <q-form class="row q-gutter-x-md" autofocus @submit="addNewCandidate">
+            <q-input
+              v-model="newCandidate"
+              :disable="disable"
+              label="Add candidate"
+              dense
+            />
+
+            <q-btn
+              :disable="!newCandidate || disable"
+              color="primary"
+              dense
+              icon="mdi-plus"
+              outline
+              fab-mini
+              type="submit"
+            />
+          </q-form>
 
           <q-btn
-            :disable="!newCandidate || disable"
+            :disabled="disable"
             color="primary"
-            dense
-            icon="mdi-plus"
             outline
-            fab-mini
-            type="submit"
-          />
-        </q-form>
-
-        <q-btn
-          :disabled="disable"
-          color="primary"
-          outline
-          @click="resetCandidates"
-        >
-          Empty Candidates List
-        </q-btn>
+            @click="resetCandidates"
+          >
+            Empty Candidates List
+          </q-btn>
+        </div>
       </div>
     </div>
-  </div>
 
-  <q-separator />
+    <q-separator />
 
-  <div class="row q-gutter-lg q-mt-md">
-    <q-input
-      v-model="proxyAmount"
-      :disable="disable"
-      dense
-      type="number"
-      :max="max"
-      label="How many will survive?"
-    >
-      <template #after>
-        <q-btn
-          rounded
-          size="md"
-          :disable="disable || !outputAmount"
-          @click="onClickGetParticipants"
-        >
-          <q-icon name="mdi-circle-outline" />
-          <q-icon name="mdi-triangle-outline" />
-          <q-icon name="mdi-square-outline" />
-        </q-btn>
-      </template>
-    </q-input>
+    <div class="row q-gutter-lg q-mt-md">
+      <q-input
+        v-model="proxyAmount"
+        :disable="disable"
+        dense
+        type="number"
+        :max="max"
+        label="How many will survive?"
+      >
+        <template #after>
+          <q-btn
+            rounded
+            size="md"
+            :disable="disable || !outputAmount"
+            @click="onClickGetParticipants"
+          >
+            <q-icon name="mdi-circle-outline" />
+            <q-icon name="mdi-triangle-outline" />
+            <q-icon name="mdi-square-outline" />
+          </q-btn>
+        </template>
+      </q-input>
 
-    <transition-group name="flip-list" tag="ul">
-      <li v-for="candidate in candidates" :key="candidate">
-        <q-chip
-          :disable="disable"
-          color="primary"
-          removable
-          text-color="white"
-          @remove="removeCandidate(candidate)"
-        >
-          {{ candidate }}
-        </q-chip>
-      </li>
-    </transition-group>
-  </div>
+      <transition-group name="flip-list" tag="ul">
+        <li v-for="candidate in candidates" :key="candidate">
+          <q-chip
+            :disable="disable"
+            color="primary"
+            removable
+            text-color="white"
+            @remove="removeCandidate(candidate)"
+          >
+            {{ candidate }}
+          </q-chip>
+        </li>
+      </transition-group>
+    </div>
+  </q-page>
 </template>
 
 <style lang="scss">

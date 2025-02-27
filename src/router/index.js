@@ -46,6 +46,7 @@ export const router = createRouter({
       ],
       component: () => import('../layouts/DefaultLayout.vue'),
       path: '',
+      redirect: { name: 'three-amigos' },
     },
     {
       path: '/:pathMatch(.*)*',

@@ -11,7 +11,7 @@ export const router = createRouter({
           component: () => import('../components/CandidatesAllocator.vue'),
           props: {
             initialCandidates: [
-              'Adrià',
+              'Bray',
               'CarlosJ',
               'CarlosM',
               'Diego',
